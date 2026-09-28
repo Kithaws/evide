@@ -33,6 +33,75 @@ function generateRideCode() {
 }
 
 // REST endpoints
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>എവിടെ (Evide) Backend API</title>
+        <style>
+          body {
+            background-color: #09090b;
+            color: #f4f4f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+          }
+          .card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+          }
+          h1 { color: #a3e635; margin: 0 0 12px 0; font-size: 24px; }
+          p { color: #a1a1aa; font-size: 14px; line-height: 1.5; margin: 8px 0; }
+          .badge {
+            display: inline-block;
+            background: rgba(163, 230, 53, 0.15);
+            color: #a3e635;
+            border: 1px solid rgba(163, 230, 53, 0.3);
+            border-radius: 9999px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-family: monospace;
+            font-weight: bold;
+            margin-bottom: 16px;
+          }
+          .btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #a3e635;
+            color: #09090b;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="badge">● SERVER ONLINE</div>
+          <h1>🏍️ എവിടെ (Evide) Backend</h1>
+          <p>The real-time WebSocket & API server is up and running on Render!</p>
+          <p style="color: #71717a; font-size: 12px;">This server powers the group ride tracking on your Vercel frontend.</p>
+          <a class="btn" href="https://notsistersevide.vercel.app">Open Evide Web App</a>
+        </div>
+      </body>
+    </html>
+  `);
+});
+
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
