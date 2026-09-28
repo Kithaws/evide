@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Compass, Copy, Check, LogOut, Radio, Users, MapPin } from 'lucide-react';
 
-export default function Navbar({ ride, currentRider, isConnected, onLeaveRide }) {
+export default function Navbar({ ride, currentRider, isConnected, onLeaveRide, onOpenServerConfig }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopyCode = () => {
