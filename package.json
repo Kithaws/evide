@@ -1,0 +1,17 @@
+{
+  "name": "evide",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Evide - Real-time group ride tracking web app for motorcycles and bicycles",
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "start": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm --prefix server start\" \"npm --prefix client run dev\"",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
