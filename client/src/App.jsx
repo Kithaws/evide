@@ -4,6 +4,7 @@ import LandingPage from './components/LandingPage';
 import CreateRideModal from './components/CreateRideModal';
 import JoinRideModal from './components/JoinRideModal';
 import LiveDashboard from './components/LiveDashboard';
+import ServerConfigModal from './components/ServerConfigModal';
 import socket from './services/socket';
 import { AlertCircle, CheckCircle, Info } from 'lucide-react';
 import { playNotificationChime } from './utils/soundUtils';
@@ -15,6 +16,7 @@ export default function App() {
   const [userName, setUserName] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isJoinOpen, setIsJoinOpen] = useState(false);
+  const [isServerConfigOpen, setIsServerConfigOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -274,6 +276,7 @@ export default function App() {
         currentRider={currentRider}
         isConnected={isConnected}
         onLeaveRide={handleLeaveRide}
+        onOpenServerConfig={() => setIsServerConfigOpen(true)}
       />
 
       {/* Main Content: Landing Page OR Live Dashboard */}
@@ -307,6 +310,11 @@ export default function App() {
         onClose={() => setIsJoinOpen(false)}
         onJoinRide={handleJoinRide}
         isLoading={isLoading}
+      />
+
+      <ServerConfigModal
+        isOpen={isServerConfigOpen}
+        onClose={() => setIsServerConfigOpen(false)}
       />
     </div>
   );

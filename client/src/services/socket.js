@@ -1,12 +1,30 @@
 import { io } from 'socket.io-client';
 
-// Dynamically connect to port 4000 on whatever host the frontend was loaded from
-// Works seamlessly on localhost, 127.0.0.1, LAN IP (e.g. 192.168.1.x), or deployed URLs
-const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-const hostname = window.location.hostname || 'localhost';
-const SOCKET_URL = `${protocol}//${hostname}:4000`;
+function getBackendUrl() {
+  // 1. Environment variable if set in Vercel / .env
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
 
-console.log('[Socket] Initializing connection to:', SOCKET_URL);
+  // 2. Custom backend URL saved by user in localStorage
+  const savedUrl = localStorage.getItem('evide_backend_url');
+  if (savedUrl && savedUrl.trim()) {
+    return savedUrl.trim();
+  }
+
+  // 3. Localhost development
+  const hostname = window.location.hostname || 'localhost';
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:4000';
+  }
+
+  // 4. Default fallback for LAN or same-domain port 4000
+  const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+  return `${protocol}//${hostname}:4000`;
+}
+
+export const SOCKET_URL = getBackendUrl();
+console.log('[Socket] Connecting to backend at:', SOCKET_URL);
 
 export const socket = io(SOCKET_URL, {
   autoConnect: true,
@@ -25,5 +43,12 @@ socket.on('connect', () => {
 socket.on('connect_error', (err) => {
   console.warn('[Socket] Connection error:', err.message);
 });
+
+export function updateBackendUrl(newUrl) {
+  if (!newUrl) return;
+  const cleaned = newUrl.trim().replace(/\/$/, '');
+  localStorage.setItem('evide_backend_url', cleaned);
+  window.location.reload();
+}
 
 export default socket;

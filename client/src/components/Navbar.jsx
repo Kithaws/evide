@@ -58,10 +58,14 @@ export default function Navbar({ ride, currentRider, isConnected, onLeaveRide })
       {/* Right controls */}
       <div className="flex items-center gap-3">
         {/* Connection status indicator */}
-        <div className="flex items-center gap-2 text-xs text-zinc-400">
-          <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-lime-400 ring-2 ring-lime-400/20' : 'bg-red-500 ring-2 ring-red-500/20'}`} />
-          <span className="hidden lg:inline text-[11px] font-mono text-zinc-400">{isConnected ? 'ONLINE' : 'CONNECTING...'}</span>
-        </div>
+        <button
+          onClick={onOpenServerConfig}
+          className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-zinc-900/60 hover:bg-zinc-800 border border-zinc-800/80 text-xs text-zinc-400 transition-colors"
+          title="Click to check or configure backend server URL"
+        >
+          <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-lime-400 ring-2 ring-lime-400/20' : 'bg-red-500 ring-2 ring-red-500/20 animate-pulse'}`} />
+          <span className="text-[11px] font-mono text-zinc-300">{isConnected ? 'ONLINE' : 'OFFLINE (Config)'}</span>
+        </button>
 
         {/* If inside ride: mobile copy code & leave ride button */}
         {ride && (
