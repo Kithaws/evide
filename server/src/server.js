@@ -62,13 +62,16 @@ io.on('connection', (socket) => {
   console.log(`[Socket] Rider connected: ${socket.id}`);
 
   // Create a new ride
-  socket.on('create-ride', ({ userName, rideName, destination }, callback) => {
+  socket.on('create-ride', ({ userName, rideName, destination, rideCode }, callback) => {
     try {
       const trimmedName = (userName || 'Rider').trim();
       const trimmedRide = (rideName || 'Group Ride').trim();
       const trimmedDest = (destination || 'Open Road').trim();
 
-      const code = generateRideCode();
+      let code = (rideCode || '').trim().toUpperCase();
+      if (!code || rides.has(code) || code.length < 4) {
+        code = generateRideCode();
+      }
       const newRide = {
         code,
         name: trimmedRide,
@@ -296,6 +299,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🏍️ എവിടെ (Evide) server running on http://localhost:${PORT}`);
 });

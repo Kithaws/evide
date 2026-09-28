@@ -138,8 +138,9 @@ export default function App() {
     socket.on('rider-left', onRiderLeft);
 
     if (socket.connected) {
-      setIsConnected(true);
-      setCurrentRiderId(socket.id);
+      onConnect();
+    } else {
+      socket.connect();
     }
 
     return () => {
@@ -151,14 +152,30 @@ export default function App() {
       socket.off('ride-started', onRideStarted);
       socket.off('rider-left', onRiderLeft);
     };
-  }, [currentRiderId]);
+  }, []);
 
   // Create Ride Action
-  const handleCreateRide = ({ userName, rideName, destination }) => {
+  const handleCreateRide = ({ userName, rideName, destination, rideCode }) => {
     setIsLoading(true);
     setUserName(userName);
 
-    socket.emit('create-ride', { userName, rideName, destination }, (res) => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    let finished = false;
+    const timer = setTimeout(() => {
+      if (!finished) {
+        finished = true;
+        setIsLoading(false);
+        alert('Server response timed out. Please check that the server is running on port 4000.');
+      }
+    }, 6000);
+
+    socket.emit('create-ride', { userName, rideName, destination, rideCode }, (res) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
       setIsLoading(false);
       if (res && res.success) {
         setRide(res.ride);
@@ -182,7 +199,23 @@ export default function App() {
     setIsLoading(true);
     setUserName(userName);
 
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    let finished = false;
+    const timer = setTimeout(() => {
+      if (!finished) {
+        finished = true;
+        setIsLoading(false);
+        alert('Server response timed out. Please check that the server is running on port 4000.');
+      }
+    }, 6000);
+
     socket.emit('join-ride', { userName, rideCode }, (res) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
       setIsLoading(false);
       if (res && res.success) {
         setRide(res.ride);
