@@ -52,15 +52,32 @@ export default function LiveMap({ riders, currentRiderId, focusedRiderId, onClea
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    const initialLat = 37.7749;
-    const initialLng = -122.4194;
+    // Check if any rider already has coordinates
+    const existingCoords = Object.values(riders || {}).find(r => r.coords?.lat != null)?.coords;
+
+    // Default center (Kerala / local region: 10.8505, 76.2711) or existing rider coordinates
+    const initialLat = existingCoords?.lat || 10.8505;
+    const initialLng = existingCoords?.lng || 76.2711;
 
     const map = L.map(mapContainerRef.current, {
       center: [initialLat, initialLng],
-      zoom: 13,
+      zoom: existingCoords ? 14 : 12,
       zoomControl: false,
       attributionControl: false
     });
+
+    // Automatically locate user's real GPS position on startup and center map
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (mapRef.current && !hasInitialFitRef.current) {
+            mapRef.current.setView([pos.coords.latitude, pos.coords.longitude], 14, { animate: true });
+          }
+        },
+        (err) => console.log('Initial location lookup:', err.message),
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+      );
+    }
 
     // Apply the chosen tile layer
     applyTileLayer(map, mapTheme, apiKey);

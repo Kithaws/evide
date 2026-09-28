@@ -34,6 +34,27 @@ export default function LiveDashboard({
     }
   }, [ride?.code, currentRiderId]);
 
+  // Read user's real position as soon as dashboard opens
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const initial = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy || 10,
+            heading: pos.coords.heading != null ? Math.round(pos.coords.heading) : 0,
+            speed: pos.coords.speed || 0,
+            timestamp: Date.now()
+          };
+          setCurrentCoords(initial);
+        },
+        (err) => console.log('Initial location lookup:', err.message),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+      );
+    }
+  }, []);
+
   // Handle Real Geolocation Tracking
   const startRealGeolocation = () => {
     if (!('geolocation' in navigator)) {
@@ -92,10 +113,13 @@ export default function LiveDashboard({
     setIsSharing(true);
     setGeoError(null);
 
-    // If we don't have coords yet, start near a nice route (e.g., California Highway 1 / Bay Area)
+    // Start simulation at user's real location (or local region), NEVER San Francisco!
+    const defaultLat = 10.8505;
+    const defaultLng = 76.2711;
+
     let current = currentCoords || {
-      lat: 37.7749 + (Math.random() - 0.5) * 0.02,
-      lng: -122.4194 + (Math.random() - 0.5) * 0.02,
+      lat: defaultLat + (Math.random() - 0.5) * 0.01,
+      lng: defaultLng + (Math.random() - 0.5) * 0.01,
       accuracy: 5,
       heading: 45,
       speed: 12.5, // ~45 km/h
